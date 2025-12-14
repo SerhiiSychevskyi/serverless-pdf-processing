@@ -19,7 +19,7 @@ export const handler = async (event) => {
   const now = Date.now();
   console.log("Thumbnail Lambda invoked:", { jobId, bucket, s3Key });
 
-  // 1) Mark start of thumbnail generation
+  // Mark start of thumbnail generation
   await dynamo.send(
     new UpdateItemCommand({
       TableName: TABLE_NAME,
@@ -32,7 +32,7 @@ export const handler = async (event) => {
     })
   );
 
-  // 2) Prepare PDF
+  // Prepare PDF
   const fileName = safeFileNameFromKey(s3Key);
   const svg = buildSvgThumbnail({
     title: fileName,
@@ -40,7 +40,7 @@ export const handler = async (event) => {
     meta: new Date(now).toISOString()
   });
 
-  // 3) Save SVG to S3
+  // Save SVG to S3
   const thumbnailKey = `thumbnails/${jobId}.svg`;
 
   await s3.send(
@@ -56,7 +56,7 @@ export const handler = async (event) => {
   const thumbnailUrl = `s3://${bucket}/${thumbnailKey}`;
   const finished = Date.now();
 
-  // 4) Update DynamoDB
+  // Update DynamoDB
   await dynamo.send(
     new UpdateItemCommand({
       TableName: TABLE_NAME,
@@ -72,7 +72,7 @@ export const handler = async (event) => {
     })
   );
 
-  // 5) Aggregation check
+  // Aggregation check
   const job = await dynamo.send(
     new GetItemCommand({
       TableName: TABLE_NAME,

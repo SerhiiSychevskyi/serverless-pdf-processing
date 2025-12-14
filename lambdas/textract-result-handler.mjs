@@ -37,6 +37,7 @@ export const handler = async (event) => {
             SET ocrStatus = :failed,
                 #status = :failedStatus,
                 errorMessage = :error,
+                ocrFinishedAt = :now,
                 finishedAt = :now,
                 updatedAt = :now
           `,
@@ -73,6 +74,7 @@ export const handler = async (event) => {
         UpdateExpression: `
           SET ocrStatus = :done,
               ocrText = :text,
+              ocrFinishedAt = :now,
               updatedAt = :now
         `,
         ExpressionAttributeValues: {

@@ -23,9 +23,8 @@ export const handler = async (event) => {
   const jobId = randomUUID();
   const now = Date.now();
 
-  // --------------------------------------------------
-  // 1️⃣ Create initial job
-  // --------------------------------------------------
+  // Create initial job
+
   await dynamo.send(
     new PutItemCommand({
       TableName: "DocumentProcessingJobs",
@@ -43,9 +42,8 @@ export const handler = async (event) => {
 
   console.log("Job created:", jobId);
 
-  // --------------------------------------------------
-  // 2️⃣ Start Textract (async)
-  // --------------------------------------------------
+  // Start Textract (async)
+
   const textractResponse = await textract.send(
     new StartDocumentTextDetectionCommand({
       DocumentLocation: {
@@ -84,13 +82,12 @@ export const handler = async (event) => {
     })
   );
 
-  // --------------------------------------------------
-  // 3️⃣ Invoke Thumbnail Lambda (async)
-  // --------------------------------------------------
+  // Invoke Thumbnail Lambda (async)
+
   await lambda.send(
     new InvokeCommand({
       FunctionName: THUMBNAIL_FUNCTION_NAME,
-      InvocationType: "Event", // async
+      InvocationType: "Event",
       Payload: Buffer.from(
         JSON.stringify({
           jobId,
